@@ -2,7 +2,6 @@ import { RiPatreonLine } from 'react-icons/ri';
 import { SubscribeBlock } from '~/components/SubscribeBlock';
 import { socialLinks } from '~/config';
 
-
 export const Patreon = () => {
     return (
         <section className="py-24 bg-cover bg-no-repeat bg-center bg-base-300">

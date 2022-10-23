@@ -1,6 +1,6 @@
 import { AiTwotoneCalendar } from 'react-icons/ai'
 import { RiTimeLine } from 'react-icons/ri'
-import { Link } from 'remix'
+import { Link } from '@remix-run/react';
 
 import { EpisodeT } from '~/types'
 import { getPublishDate } from '~/utils'

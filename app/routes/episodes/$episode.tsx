@@ -1,6 +1,6 @@
 import type { sp_episode } from '@prisma/client';
-import { useLoaderData } from 'remix';
-import type { LoaderFunction } from 'remix';
+import { useLoaderData } from '@remix-run/react';
+import type { LoaderFunction } from '@remix-run/node';
 import { getEpisode } from '~/api';
 import { EpisodePlayer } from '~/components/EpisodePlayer';
 
@@ -11,8 +11,6 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export default function Index() {
     const [episode]: [sp_episode] = useLoaderData();
-
-    console.log('----', episode)
 
     return (
         <article>

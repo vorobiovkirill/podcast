@@ -1,5 +1,5 @@
 import { RiArrowRightSLine } from 'react-icons/ri'
-import { Link } from 'remix'
+import { Link } from '@remix-run/react';
 
 import { SeasonListCard } from '~/components/SeasonListCard'
 import { SeasonListT } from '~/types'

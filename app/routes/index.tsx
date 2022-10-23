@@ -1,5 +1,6 @@
-import { json, useLoaderData } from 'remix';
-import type { LoaderFunction } from 'remix';
+import { json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import type { LoaderFunction } from '@remix-run/node';
 
 import remixI18n from '~/server/i18n.server';
 
