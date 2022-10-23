@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model sp_episode {
+  id             String     @id(map: "episodes_pkey") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at     DateTime?  @db.Date
+  title          String?    @db.VarChar
+  updated_at     DateTime?  @db.Date
+  shownotes      String?
+  audio          String?    @db.VarChar
+  episode_number Int?
+  duration       String?    @db.VarChar
+  keywords       String[]
+  description    String?
+  size           Float?     @db.Real
+  season_number  Int?
+  season_id      String?    @db.Uuid
+  sp_season      sp_season? @relation(fields: [season_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("sp-episode")
+}
+
+model sp_season {
+  id                 String       @id @db.Uuid
+  created_at         DateTime?    @db.Date
+  updated_at         DateTime?    @db.Date
+  season_title       String?      @db.VarChar
+  season_number      Int?
+  season_description String?      @db.VarChar
+  total_episodes     Int?
+  sp_episode         sp_episode[]
+
+  @@map("sp-season")
+}
