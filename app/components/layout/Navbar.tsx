@@ -21,8 +21,6 @@ export const Navbar = () => {
         console.log('sdsdsad');
     };
 
-    console.log('toggle', toggle)
-
     return (
         <IconContext.Provider value={{ size: '2em' }}>
             <div className="sp-navbar bg-base-100 shadow-xl sticky top-0 z-50">

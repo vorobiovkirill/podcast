@@ -14,7 +14,8 @@ import {
     useLoaderData
 } from '@remix-run/react'
 import type { LoaderFunction, MetaFunction, LinksFunction } from '@remix-run/node';
-import { useSetupTranslations } from 'remix-i18next';
+import { useChangeLanguage } from "remix-i18next";
+import { useTranslation } from "react-i18next";
 
 import { Footer } from '~/components/layout/Footer';
 import { Navbar } from '~/components/layout/Navbar';
@@ -27,7 +28,7 @@ import {
 } from '~/providers/ThemeProvider';
 
 import { getEnv } from './server/env.server';
-import remixI18n from '~/server/i18n.server';
+import i18next from '~/server/i18next.server';
 import { getThemeSession } from '~/server/theme.server';
 
 import styles from '~/styles/app.css';
@@ -40,6 +41,8 @@ export type LoaderData = {
             theme: Theme | null;
         };
     };
+    title: string;
+    description: string;
 };
 
 export const links: LinksFunction = () => {
@@ -75,7 +78,10 @@ export const links: LinksFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
     const themeSession = await getThemeSession(request);
-    const locale = await remixI18n.getLocale(request);
+    const locale = await i18next.getLocale(request);
+    const t = await i18next.getFixedT(request, 'meta');
+    const title = t('title');
+    const description = t('description');
     const lngInQuery = new URL(request.url).searchParams.get('lng');
 
     const headers: HeadersInit = new Headers();
@@ -95,15 +101,25 @@ export const loader: LoaderFunction = async ({ request }) => {
             session: {
                 theme: themeSession.getTheme()
             }
-        }
+        },
+        title,
+        description,
     };
 
     return json(data, { headers });
 };
 
-export const meta: MetaFunction = () => {
-    const metaTitle = 'Скажи Паляниця | Podcast';
-    const metaDescription = 'Наш любимый подкасик';
+export let handle = {
+    // In the handle export, we can add a i18n key with namespaces our route
+    // will need to load. This key can be a single string or an array of strings.
+    // TIP: In most cases, you should set this to your defaultNS from your i18n config
+    // or if you did not set one, set it to the i18next default namespace "translation"
+    i18n: ["common"],
+  };
+
+export const meta: MetaFunction = ({ data }) => {
+    const metaTitle = data.title;
+    const metaDescription = data.description;
     return {
         metaTitle,
         metaDescription,
@@ -115,15 +131,19 @@ export const meta: MetaFunction = () => {
 
 export default function App() {
     const data = useLoaderData<LoaderData>();
-    useSetupTranslations(data.locale);
+    const { i18n } = useTranslation();
 
-    // console.log('locale', locale);
-    // console.log('theme', theme);
+    // This hook will change the i18n instance language to the current locale
+    // detected by the loader, this way, when we do something to change the
+    // language, this locale will change and i18next will load the correct
+    // translation files
+    useChangeLanguage(data.locale);
 
     return (
         <ThemeProvider specifiedTheme={data.requestInfo.session.theme}>
             <Document
                 env={data.ENV}
+                i18n={i18n}
                 locale={data.locale}
                 specifiedTheme={data.requestInfo.session.theme}
             >
@@ -140,18 +160,20 @@ const Document = ({
     env,
     locale,
     specifiedTheme,
-    title
+    title,
+    i18n
 }: {
     children: React.ReactNode;
     env: ReturnType<typeof getEnv>,
     locale: string;
     specifiedTheme: Theme | null;
     title?: string;
+    i18n?: any;
 }) => {
     const [theme] = useTheme();
 
     return (
-        <html className={clsx(theme)} lang={locale} data-theme={theme}>
+        <html className={clsx(theme)} lang={locale} data-theme={theme} dir={i18n.dir()}>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" />
