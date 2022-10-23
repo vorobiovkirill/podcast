@@ -1,5 +1,5 @@
-import { useLoaderData } from 'remix';
-import type { LoaderFunction } from 'remix';
+import { useLoaderData } from '@remix-run/react';
+import type { LoaderFunction } from '@remix-run/node';
 import { getEpisodesBySeason } from '~/api';
 import { sp_episode } from '@prisma/client';
 import { EpisodeList } from '~/components/EpisodeList';

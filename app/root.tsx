@@ -1,7 +1,9 @@
 import clsx from 'clsx';
 import {
     createCookie,
-    json,
+    json
+} from '@remix-run/node';
+import {
     Links,
     LiveReload,
     Meta,
@@ -10,8 +12,8 @@ import {
     ScrollRestoration,
     useCatch,
     useLoaderData
-} from 'remix';
-import type { LoaderFunction, MetaFunction, LinksFunction } from 'remix';
+} from '@remix-run/react'
+import type { LoaderFunction, MetaFunction, LinksFunction } from '@remix-run/node';
 import { useSetupTranslations } from 'remix-i18next';
 
 import { Footer } from '~/components/layout/Footer';

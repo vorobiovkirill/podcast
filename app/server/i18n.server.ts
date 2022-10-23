@@ -1,5 +1,5 @@
 import { RemixI18Next, FileSystemBackend } from 'remix-i18next';
-import { createCookie } from 'remix'
+import { createCookie } from '@remix-run/node'
 
 import i18nextOptions from '../../i18nextOptions';
 
