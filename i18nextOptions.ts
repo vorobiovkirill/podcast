@@ -1,9 +1,8 @@
 export default {
     debug: process.env.NODE_ENV !== 'production',
     fallbackLng: 'en',
-    supportedLanguages: ['es', 'en', 'ua'],
+    supportedLngs: ['en', 'ua'],
     defaultNS: 'common',
-    ns: [],
+    ns: ['common', 'meta'],
     react: { useSuspense: false },
-    resources: {}
   }
