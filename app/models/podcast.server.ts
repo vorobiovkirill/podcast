@@ -1,10 +1,10 @@
 import type { sp_episode, sp_season } from '@prisma/client';
 import { supabase } from '~/libs/supabase-client';
 
-const getSeasonEpisodeList = async (): Promise<sp_season[] | null> => {
+const getSeasonEpisodeList = async () => {
     try {
         const { data: seasons, error } = await supabase
-            .from<sp_season>('sp-season')
+            .from<'sp-season', sp_season>('sp-season')
             .select(
                 `
                 created_at,
@@ -28,10 +28,10 @@ const getSeasonEpisodeList = async (): Promise<sp_season[] | null> => {
     }
 };
 
-const getEpisodeList = async (): Promise<sp_episode[] | null> => {
+const getEpisodeList = async () => {
     try {
         let { data: episodes, error } = await supabase
-            .from<sp_episode>('sp-episode')
+            .from<'sp-episode', sp_episode>('sp-episode')
             .select()
             .order('season_number')
             .order('episode_number');
@@ -46,12 +46,12 @@ const getEpisodeList = async (): Promise<sp_episode[] | null> => {
     }
 };
 
-const getLatestEpisodeList = async (): Promise<sp_episode[] | null> => {
+const getLatestEpisodeList = async () => {
     try {
         let { data: episodes, error } = await supabase
-            .from<sp_episode>('sp-episode')
+            .from('sp-episode')
             .select()
-            .order('created_at', {ascending: false})
+            .order('created_at', { ascending: false })
             .limit(4);
 
         if (error) {
@@ -64,10 +64,10 @@ const getLatestEpisodeList = async (): Promise<sp_episode[] | null> => {
     }
 };
 
-const getEpisode = async (id: string): Promise<sp_episode[] | null> => {
+const getEpisode = async (id: string) => {
     try {
         let { data: episode, error } = await supabase
-            .from<sp_episode>('sp-episode')
+            .from<'sp-episode', sp_episode>('sp-episode')
             .select()
             .eq('id', id);
 
@@ -81,10 +81,10 @@ const getEpisode = async (id: string): Promise<sp_episode[] | null> => {
     }
 };
 
-const getEpisodesBySeason = async (id: string): Promise<sp_episode[] | null> => {
+const getEpisodesBySeason = async (id: string) => {
     try {
         let { data: episode, error } = await supabase
-            .from<sp_episode>('sp-episode')
+            .from<'sp-episode', sp_episode>('sp-episode')
             .select()
             .eq('season_id', id);
 

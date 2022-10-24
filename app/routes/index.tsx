@@ -4,7 +4,7 @@ import type { LoaderFunction } from '@remix-run/node';
 
 import { useTranslation } from "react-i18next";
 
-import { getSeasonEpisodeList, getLatestEpisodeList } from '~/api';
+import { getSeasonEpisodeList, getLatestEpisodeList } from '~/models/podcast.server';
 
 import { Hero } from '~/components/layout/Hero';
 import { Patreon } from '~/components/layout/Patreon';

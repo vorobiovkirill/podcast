@@ -11,7 +11,8 @@ import {
     Scripts,
     ScrollRestoration,
     useCatch,
-    useLoaderData
+    useLoaderData,
+    useLocation
 } from '@remix-run/react'
 import type { LoaderFunction, MetaFunction, LinksFunction } from '@remix-run/node';
 import { useChangeLanguage } from "remix-i18next";
@@ -115,7 +116,7 @@ export let handle = {
     // TIP: In most cases, you should set this to your defaultNS from your i18n config
     // or if you did not set one, set it to the i18next default namespace "translation"
     i18n: ["common"],
-  };
+};
 
 export const meta: MetaFunction = ({ data }) => {
     const metaTitle = data.title;
@@ -129,9 +130,10 @@ export const meta: MetaFunction = ({ data }) => {
     };
 };
 
-export default function App() {
+function App() {
     const data = useLoaderData<LoaderData>();
     const { i18n } = useTranslation();
+    const [theme] = useTheme();
 
     // This hook will change the i18n instance language to the current locale
     // detected by the loader, this way, when we do something to change the
@@ -140,90 +142,75 @@ export default function App() {
     useChangeLanguage(data.locale);
 
     return (
-        <ThemeProvider specifiedTheme={data.requestInfo.session.theme}>
-            <Document
-                env={data.ENV}
-                i18n={i18n}
-                locale={data.locale}
-                specifiedTheme={data.requestInfo.session.theme}
-            >
-                <Layout>
-                    <Outlet />
-                </Layout>
-            </Document>
-        </ThemeProvider>
-    );
-}
-
-const Document = ({
-    children,
-    env,
-    locale,
-    specifiedTheme,
-    title,
-    i18n
-}: {
-    children: React.ReactNode;
-    env: ReturnType<typeof getEnv>,
-    locale: string;
-    specifiedTheme: Theme | null;
-    title?: string;
-    i18n?: any;
-}) => {
-    const [theme] = useTheme();
-
-    return (
-        <html className={clsx(theme)} lang={locale} data-theme={theme} dir={i18n.dir()}>
+        <html className={clsx(theme)} lang={data.locale} data-theme={theme} dir={i18n.dir()}>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" />
-                {title ? <title>{title}</title> : null}
+                {data?.title ? <title>{data.title}</title> : null}
                 <Meta />
                 <Links />
-                <NonFlashOfWrongThemeEls ssrTheme={Boolean(specifiedTheme)} />
+                <NonFlashOfWrongThemeEls ssrTheme={Boolean(data.requestInfo.session.theme)} />
             </head>
             <body>
                 <Navbar />
-                {children}
+                <Outlet />
                 <Footer />
                 <ScrollRestoration />
                 <Scripts />
                 <script
                     dangerouslySetInnerHTML={{
-                        __html: `window.ENV = ${JSON.stringify(env)};`
+                        __html: `window.ENV = ${JSON.stringify(data.ENV)};`
                     }}
                 />
                 {process.env.NODE_ENV === 'development' && <LiveReload />}
             </body>
         </html>
     );
-};
+}
 
-const Layout = ({ children }: React.PropsWithChildren<{}>) => {
-    return <main>{children}</main>;
-};
-
-export const CatchBoundary = () => {
-    let caught = useCatch();
-
-    let message;
-    switch (caught.status) {
-        case 404:
-            message = <p>This is a custom error message for 404 pages</p>;
-            break;
-        // You can customize the behavior for other status codes
-        default:
-            throw new Error(caught.data || caught.statusText);
-    }
-
+export default function AppWithProviders() {
+    const data = useLoaderData<LoaderData>()
     return (
-        <Document title={`${caught.status} ${caught.statusText}`}>
-            <Layout>
-                <h1>
-                    {caught.status}: {caught.statusText}
-                </h1>
-                {message}
-            </Layout>
-        </Document>
-    );
-};
+        <ThemeProvider specifiedTheme={data.requestInfo.session.theme}>
+            <App />
+        </ThemeProvider>
+    )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+    console.error(error)
+    const location = useLocation()
+    return (
+        <html lang="en" className="dark">
+            <head>
+                <title>Oh no...</title>
+                <Links />
+            </head>
+            <body className="bg-white transition duration-500 dark:bg-gray-900">
+                FUUUUUUUUUUUUUU
+                <Scripts />
+            </body>
+        </html>
+    )
+}
+
+export function CatchBoundary() {
+    const caught = useCatch()
+    const location = useLocation()
+    console.error('CatchBoundary', caught)
+    if (caught.status === 404) {
+        return (
+            <html lang="en" className="dark">
+                <head>
+                    <title>Oh no...</title>
+                    <Links />
+                </head>
+                <body className="bg-white transition duration-500 dark:bg-gray-900">
+                    ERROR
+                    <Scripts />
+                </body>
+            </html>
+        )
+    }
+    throw new Error(`Unhandled error: ${caught.status}`)
+}

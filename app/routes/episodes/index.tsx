@@ -1,7 +1,7 @@
 import type { sp_episode } from '@prisma/client';
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunction, MetaFunction } from '@remix-run/node';
-import { getEpisodeList } from '~/api';
+import { getEpisodeList } from '~/models/podcast.server';
 import { EpisodeList } from '~/components/EpisodeList';
 
 

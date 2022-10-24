@@ -1,7 +1,7 @@
 import type { sp_episode } from '@prisma/client';
 import { useLoaderData } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/node';
-import { getEpisode } from '~/api';
+import { getEpisode } from '~/models/podcast.server';
 import { EpisodePlayer } from '~/components/EpisodePlayer';
 
 export const loader: LoaderFunction = async ({ params }) => {
